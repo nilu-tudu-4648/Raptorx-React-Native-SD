@@ -1,0 +1,29 @@
+{
+  "name": "raptorx-react-native-sd",
+  "version": "1.0.4",
+  "description": "testing",
+  "main": "RaptorXMob.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nilu-tudu-4648/raptorx-react-native-sd.git"
+  },
+  "author": "Nilesh",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "react": "18.2.0",
+    "react-native": "0.73.6",
+    "react-native-fs": "^2.20.0",
+    "react-native-localize": "^3.0.6"
+  },
+  "peerDependencies": {
+    "react-native-device-info": "^10.13.1"
+  },
+  "bugs": {
+    "url": "https://github.com/nilu-tudu-4648/raptorx-react-native-sd/issues"
+  },
+  "homepage": "https://github.com/nilu-tudu-4648/raptorx-react-native-sd#readme"
+}
