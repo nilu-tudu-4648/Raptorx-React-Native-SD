@@ -1,10 +1,23 @@
 import DeviceInfo from "react-native-device-info";
-import { Keyboard, StyleSheet, TextInput, TouchableWithoutFeedback, View } from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import * as RNLocalize from "react-native-localize";
 import RNFS from "react-native-fs";
 import { useRef } from "react";
 import KeystrokeDynamicsSDK from "./components/KeystrokeDynamicsSDK";
-import { gyroscope, accelerometer, magnetometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
+import {
+  gyroscope,
+  accelerometer,
+  magnetometer,
+  setUpdateIntervalForType,
+  SensorTypes,
+} from "react-native-sensors";
+import ScrollSpeedCapture from "./components/ScrollSpeedCapture";
 
 setUpdateIntervalForType(SensorTypes.gyroscope, 3000);
 
@@ -121,24 +134,27 @@ export const KeyStrokeCapture = ({ style, ...props }) => {
   const kdRef = useRef(new KeystrokeDynamicsSDK());
 
   const handleKeyPress = (event) => {
-      kdRef.current.handleKeyPress(event);
+    kdRef.current.handleKeyPress(event);
   };
 
   return (
-      <TextInput
+    <TextInput
       style={[styles.input, style]}
-          onKeyPress={handleKeyPress}
-          {...props}
-      />
+      onKeyPress={handleKeyPress}
+      {...props}
+    />
   );
 };
 const styles = StyleSheet.create({
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
   },
 });
- export const gyroscopeSubscription = gyroscope.subscribe(({ x, y, z, timestamp }) =>
-      console.log({ x, y, z, timestamp }, 'gyroscope')
-    );
+export const gyroscopeSubscription = gyroscope.subscribe(
+  ({ x, y, z, timestamp }) => console.log({ x, y, z, timestamp }, "gyroscope")
+);
+export const ScrollEventCapture = (props) => {
+  return <ScrollSpeedCapture {...props} />;
+};
