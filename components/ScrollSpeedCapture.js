@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { ScrollView } from 'react-native';
 
-const ScrollSpeedCapture = ({ onScroll, children }) => {
+const ScrollSpeedCapture = ({ children }) => {
   const scrollViewRef = useRef(null);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [lastScrollTime, setLastScrollTime] = useState(0);
@@ -16,11 +16,7 @@ const ScrollSpeedCapture = ({ onScroll, children }) => {
     // Determine direction
     const direction = scrollY > lastScrollY ? 'down' : 'up';
 
-    // Call onScroll callback with speed and direction
-    if (onScroll && typeof onScroll === 'function') {
-      onScroll({ speed, direction });
-      console.log({ speed:`${speed} pixels/ms`, direction })
-    }
+    console.log({ speed:`${speed} pixels/ms`, direction })
 
     // Update last scroll time and position
     setLastScrollTime(currentTime);

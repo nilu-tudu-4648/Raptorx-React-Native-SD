@@ -18,7 +18,7 @@ import {
   SensorTypes,
 } from "react-native-sensors";
 import ScrollSpeedCapture from "./components/ScrollSpeedCapture";
-
+import Geolocation from '@react-native-community/geolocation';
 setUpdateIntervalForType(SensorTypes.gyroscope, 3000);
 
 export function captureKeyboardEvents(callback) {
@@ -158,3 +158,6 @@ export const gyroscopeSubscription = gyroscope.subscribe(
 export const ScrollEventCapture = (props) => {
   return <ScrollSpeedCapture {...props} />;
 };
+export const getCurrentLocation =()=>{
+  Geolocation.getCurrentPosition(info => console.log(`location:${info}`));
+}
