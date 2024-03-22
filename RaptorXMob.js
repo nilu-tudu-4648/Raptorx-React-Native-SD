@@ -6,7 +6,7 @@ import { useRef } from "react";
 import KeystrokeDynamicsSDK from "./components/KeystrokeDynamicsSDK";
 import { gyroscope, accelerometer, magnetometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
 
-setUpdateIntervalForType(SensorTypes.accelerometer, 3000);
+setUpdateIntervalForType(SensorTypes.gyroscope, 3000);
 
 export function captureKeyboardEvents(callback) {
   const keyboardDidShowListener = Keyboard.addListener(
