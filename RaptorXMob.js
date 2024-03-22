@@ -1,5 +1,5 @@
 import DeviceInfo from "react-native-device-info";
-import { Keyboard, TextInput, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, StyleSheet, TextInput, TouchableWithoutFeedback, View,StyleSheet } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import RNFS from "react-native-fs";
 import { useRef } from "react";
@@ -114,7 +114,7 @@ export async function getDeviceInfo() {
     throw error;
   }
 }
-export const KeyStrokeCapture = (props) => {
+export const KeyStrokeCapture = ({ style, ...props }) => {
   const kdRef = useRef(new KeystrokeDynamicsSDK());
 
   const handleKeyPress = (event) => {
@@ -123,9 +123,16 @@ export const KeyStrokeCapture = (props) => {
 
   return (
       <TextInput
-          style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+      style={[styles.input, style]}
           onKeyPress={handleKeyPress}
           {...props}
       />
   );
 };
+const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+  },
+});
