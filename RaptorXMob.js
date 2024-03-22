@@ -1,9 +1,12 @@
 import DeviceInfo from "react-native-device-info";
-import { Keyboard, StyleSheet, TextInput, TouchableWithoutFeedback, View,StyleSheet } from "react-native";
+import { Keyboard, StyleSheet, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import RNFS from "react-native-fs";
 import { useRef } from "react";
 import KeystrokeDynamicsSDK from "./components/KeystrokeDynamicsSDK";
+import { gyroscope, accelerometer, magnetometer, setUpdateIntervalForType, SensorTypes } from 'react-native-sensors';
+
+setUpdateIntervalForType(SensorTypes.accelerometer, 3000);
 
 export function captureKeyboardEvents(callback) {
   const keyboardDidShowListener = Keyboard.addListener(
@@ -136,3 +139,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
 });
+ export const gyroscopeSubscription = gyroscope.subscribe(({ x, y, z, timestamp }) =>
+      console.log({ x, y, z, timestamp }, 'gyroscope')
+    );
