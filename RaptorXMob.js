@@ -18,9 +18,11 @@ import {
   SensorTypes,
 } from "react-native-sensors";
 import ScrollSpeedCapture from "./components/ScrollSpeedCapture";
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from "@react-native-community/geolocation";
 import ScreenChangeListener from "./components/ScreenChangeListener";
 setUpdateIntervalForType(SensorTypes.gyroscope, 3000);
+setUpdateIntervalForType(SensorTypes.accelerometer, 3000);
+setUpdateIntervalForType(SensorTypes.magnetometer, 3000);
 
 export function captureKeyboardEvents(callback) {
   const keyboardDidShowListener = Keyboard.addListener(
@@ -156,13 +158,19 @@ const styles = StyleSheet.create({
 export const gyroscopeSubscription = gyroscope.subscribe(
   ({ x, y, z, timestamp }) => console.log({ x, y, z, timestamp }, "gyroscope")
 );
+export const accelerometerSubscription = accelerometer.subscribe(
+  ({ x, y, z, timestamp }) =>
+    console.log({ x, y, z, timestamp }, "accelerometerSubscription")
+);
+export const magnetometersubscription = magnetometer.subscribe(({ x, y, z, timestamp }) =>
+  console.log({ x, y, z, timestamp },'magnetometersubscription')
+);
 export const ScrollEventCapture = (props) => {
   return <ScrollSpeedCapture {...props} />;
 };
-export const getCurrentLocation =()=>{
-  Geolocation.getCurrentPosition(info => console.log(info));
-}
+export const getCurrentLocation = () => {
+  Geolocation.getCurrentPosition((info) => console.log(info));
+};
 export const NavigationCapture = () => {
   return <ScreenChangeListener />;
 };
-
