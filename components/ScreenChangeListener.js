@@ -8,9 +8,9 @@ const ScreenChangeListener = () => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('state', () => {
       const currentRoute = navigation.getCurrentRoute();
-      console.log('Current Screen:', currentRoute.name);
+      const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
+      console.log(`[${timestamp}] Current Screen:- ${currentRoute.name}`);
     });
-
     return unsubscribe;
   }, [navigation]);
 

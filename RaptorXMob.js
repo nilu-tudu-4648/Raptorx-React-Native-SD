@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import RNFS from "react-native-fs";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import KeystrokeDynamicsSDK from "./components/KeystrokeDynamicsSDK";
 import {
   gyroscope,
@@ -155,16 +155,37 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
 });
-export const gyroscopeSubscription = gyroscope.subscribe(
-  ({ x, y, z, timestamp }) => console.log({ x, y, z, timestamp }, "gyroscope")
-);
-export const accelerometerSubscription = accelerometer.subscribe(
-  ({ x, y, z, timestamp }) =>
-    console.log({ x, y, z, timestamp }, "accelerometerSubscription")
-);
-export const magnetometersubscription = magnetometer.subscribe(({ x, y, z, timestamp }) =>
-  console.log({ x, y, z, timestamp },'magnetometersubscription')
-);
+export const MyTextInput = ({ onChange, ...rest }) => {
+  const [formData, setFormData] = useState({});
+
+  const onChangeText = (text) => {
+    const formattedText = text.trim(); // Trim extra spaces
+    const updatedFormData = { ...formData, [rest.fieldName]: formattedText };
+    setFormData(updatedFormData);
+    if (onChange) {
+      onChange(updatedFormData);
+    }
+    console.log("Form Data:", updatedFormData); // Logging the formData object
+  };
+
+  return (
+    <TextInput
+      {...rest}
+      onChangeText={onChangeText}
+      value={formData[rest.fieldName] || ''}
+    />
+  );
+};
+// export const gyroscopeSubscription = gyroscope.subscribe(
+//   ({ x, y, z, timestamp }) => console.log({ x, y, z, timestamp }, "gyroscope")
+// );
+// export const accelerometerSubscription = accelerometer.subscribe(
+//   ({ x, y, z, timestamp }) =>
+//     console.log({ x, y, z, timestamp }, "accelerometerSubscription")
+// );
+// export const magnetometersubscription = magnetometer.subscribe(({ x, y, z, timestamp }) =>
+//   console.log({ x, y, z, timestamp },'magnetometersubscription')
+// );
 export const ScrollEventCapture = (props) => {
   return <ScrollSpeedCapture {...props} />;
 };
