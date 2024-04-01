@@ -20,6 +20,7 @@ import {
 import ScrollSpeedCapture from "./components/ScrollSpeedCapture";
 import Geolocation from "@react-native-community/geolocation";
 import ScreenChangeListener from "./components/ScreenChangeListener";
+import { generateSessionId } from "./functions/generate_session_id/generateSessionId";
 setUpdateIntervalForType(SensorTypes.gyroscope, 3000);
 setUpdateIntervalForType(SensorTypes.accelerometer, 3000);
 setUpdateIntervalForType(SensorTypes.magnetometer, 3000);
@@ -195,3 +196,12 @@ export const getCurrentLocation = () => {
 export const NavigationCapture = () => {
   return <ScreenChangeListener />;
 };
+export function generateSessionIdFunc(apiKey) {
+  // Generate your session ID here, using the provided API key
+  const sessionId = generateSessionId(apiKey)
+
+  // Assuming you have a function to create a session
+  // createSession(sessionId);
+
+  return sessionId;
+}
