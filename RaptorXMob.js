@@ -203,12 +203,12 @@ export function generateSessionIdFunc(apiKey) {
 
     // Create an API instance using the provided API key
     const apiInstance = createAPIInstance(apiKey);
-
+console.log({apiInstance})
     // Assuming you have a function to create a session
     // You may use the API instance to perform API calls
-    createSession(apiInstance,sessionId,'9155186701');
+    const createS = createSession(apiInstance,sessionId,'9155186701');
 
-    return sessionId;
+    return createS;
   } catch (error) {
     console.error('Error generating session ID:', error);
     throw error; // Re-throw the error for handling at higher levels if needed

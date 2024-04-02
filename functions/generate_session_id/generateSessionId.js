@@ -62,6 +62,7 @@ const makeApiCall = async (apiInstance, sessionId, customerId, startTime, endTim
           end_time: endTime
         }
       });
+      console.log({response})
       return response;
     } catch (error) {
       return error;
