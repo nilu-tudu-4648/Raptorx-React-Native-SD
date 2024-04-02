@@ -1,72 +1,11 @@
-// import CryptoJS from "crypto-js";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CryptoJS from 'react-native-crypto-js';
 
-// const generateSessionId = async(apiKey,api,customerId) => {
-//     try {
-//         const existingSessionId = localStorage.getItem('sessionId');
-//         if (existingSessionId) {
-//             return existingSessionId;
-//         }
-
-//         if (!apiKey) {
-//             throw new Error('API key not provided. Make sure to set the API_KEY.');
-//         }
-
-//         const startTime =  new Date().toISOString();;
-//         const dataToHash = `${apiKey}_${startTime}`;
-//         const sessionId = CryptoJS.SHA256(dataToHash).toString().slice(0,30);
-//         localStorage.setItem('sessionId', sessionId);
-//         localStorage.setItem('start_time',startTime)
-//         await makeApiCall(api, sessionId, customerId,startTime)
-//         return sessionId;
-//     } catch (error) {
-//         throw error; 
-//     }
-// }
-
-// const clearSessionData = async(api,sessionId,customerId) => {
-//     try {
-//         const endTime = new Date().toISOString();
-//         const startTime=null
-//         await makeApiCall(api, sessionId, customerId,startTime, endTime);
-
-//         localStorage.removeItem('sessionId');
-//         localStorage.removeItem('start_time');
-//         localStorage.removeItem('customerId');
-//     } catch (error) {
-//         console.error('Error clearing session data:', error);
-//     }
-// };
-
-
-// const makeApiCall = async (api, sessionId, customerId, startTime, endTime) => {
-//     const params = { url: "analytics/session/capture" };
-//     try {
-//         const response = await api.post({
-//             url:params,
-//             data: {
-//                 session_id: sessionId,
-//                 customer_id: customerId,
-//                 start_time: startTime,
-//                 end_time: endTime
-//             },
-//         });
-//         return response;
-//     } catch (error) {
-//         return error;
-//     }
-// };
-// export {generateSessionId,clearSessionData};
-
-import CryptoJS from "crypto-js";
-
-const generateSessionId =(apiKey) => {
+const generateSessionId = async (apiKey) => {
     try {
-
-        if (typeof localStorage !== 'undefined') {
-            const existingSessionId = localStorage.getItem('sessionId');
-            if (existingSessionId) {
-                return existingSessionId;
-            }
+        const existingSessionId = await AsyncStorage.getItem('sessionId');
+        if (existingSessionId) {
+            return existingSessionId;
         }
 
         if (!apiKey) {
@@ -77,65 +16,56 @@ const generateSessionId =(apiKey) => {
         const dataToHash = `${apiKey}_${startTime}`;
         const sessionId = CryptoJS.SHA256(dataToHash).toString().slice(0, 30);
 
-        // Check if localStorage is available (client-side only) and set items
-        if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('sessionId', sessionId);
-            localStorage.setItem('start_time', startTime);
-        }
+        // Store sessionId and startTime in AsyncStorage
+        await AsyncStorage.setItem('sessionId', sessionId);
+        await AsyncStorage.setItem('start_time', startTime);
+
         return sessionId;
     } catch (error) {
         throw error;
     }
 };
-const createSessionData = async(api,sessionId,customerId) => {
-    try {
-        if(typeof localStorage !=='undefined'){
-         const sessionId=localStorage.getItem('sessionId');
-         const startTime=localStorage.getItem('start_time')
-        await makeApiCall(api, sessionId, customerId,startTime);
-        }else{
-            console.warn('localStorage is not supported in this environment.');
-        }
 
+const createSessionData = async (api, sessionId, customerId) => {
+    try {
+        const startTime = await AsyncStorage.getItem('start_time');
+        await makeApiCall(api, sessionId, customerId, startTime);
     } catch (error) {
-        console.error('Error clearing session data:', error);
+        console.error('Error creating session data:', error);
     }
 };
 
 const clearSessionData = async (api, sessionId, customerId) => {
     try {
         const endTime = new Date().toISOString();
-        const startTime = null;
+        const startTime = await AsyncStorage.getItem('start_time');
 
         await makeApiCall(api, sessionId, customerId, startTime, endTime);
 
-        // Check if localStorage is available (client-side only) and remove items
-        if (typeof localStorage !== 'undefined') {
-            localStorage.removeItem('sessionId');
-            localStorage.removeItem('start_time');
-            localStorage.removeItem('customerId');
-        }
+        // Remove sessionId and startTime from AsyncStorage
+        await AsyncStorage.removeItem('sessionId');
+        await AsyncStorage.removeItem('start_time');
     } catch (error) {
         console.error('Error clearing session data:', error);
     }
 };
 
-const makeApiCall = async (api, sessionId, customerId, startTime, endTime) => {
+const makeApiCall = async (apiInstance, sessionId, customerId, startTime, endTime) => {
     const params = { url: "analytics/session/capture" };
     try {
-        const response = await api.post({
-            url: params,
-            data: {
-                session_id: sessionId,
-                customer_id: customerId,
-                start_time: startTime,
-                end_time: endTime
-            },
-        });
-        return response;
+      const response = await apiInstance.post({
+        url: params.url,
+        data: {
+          session_id: sessionId,
+          customer_id: customerId,
+          start_time: startTime,
+          end_time: endTime
+        }
+      });
+      return response;
     } catch (error) {
-        return error;
+      return error;
     }
-};
-
-export { generateSessionId, clearSessionData,createSessionData };
+  };
+  
+export { generateSessionId, clearSessionData, createSessionData };

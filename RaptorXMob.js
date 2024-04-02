@@ -197,11 +197,20 @@ export const NavigationCapture = () => {
   return <ScreenChangeListener />;
 };
 export function generateSessionIdFunc(apiKey) {
-  // Generate your session ID here, using the provided API key
-  const sessionId = generateSessionId(apiKey)
+  try {
+    // Generate your session ID here, using the provided API key
+    const sessionId = generateSessionId(apiKey);
 
-  // Assuming you have a function to create a session
-  // createSession(sessionId);
+    // Create an API instance using the provided API key
+    const apiInstance = createAPIInstance(apiKey);
 
-  return sessionId;
+    // Assuming you have a function to create a session
+    // You may use the API instance to perform API calls
+    createSession(apiInstance,sessionId,'9155186701');
+
+    return sessionId;
+  } catch (error) {
+    console.error('Error generating session ID:', error);
+    throw error; // Re-throw the error for handling at higher levels if needed
+  }
 }
