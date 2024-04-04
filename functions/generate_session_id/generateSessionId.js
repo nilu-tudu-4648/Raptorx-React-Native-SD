@@ -50,22 +50,40 @@ const clearSessionData = async (api, sessionId, customerId) => {
     }
 };
 
-const makeApiCall = async (apiInstance, sessionId, customerId, startTime, endTime) => {
-    const params = { url: "analytics/session/capture" };
+// const makeApiCall = async (apiInstance, sessionId, customerId, startTime, endTime) => {
+//     const params = { url: "analytics/session/capture" };
+//     try {
+//       const response = await apiInstance.post({
+//         url: params.url,
+//         data: {
+//           session_id: sessionId,
+//           customer_id: customerId,
+//           start_time: startTime,
+//           end_time: endTime
+//         }
+//       });
+//       return response;
+//     } catch (error) {
+//       return error;
+//     }
+//   };
+const makeApiCall = async (api, sessionId, customerId, startTime, endTime) => {
+    const url = "analytics/session/capture"; // Define the URL directly
+  console.log({sessionId})
     try {
-      const response = await apiInstance.post({
-        url: params.url,
-        data: {
-          session_id: sessionId,
-          customer_id: customerId,
-          start_time: startTime,
-          end_time: endTime
-        }
-      });
-      console.log({response})
-      return response;
+        const response = await api.post({
+            url: url, // Pass the URL directly, not as part of params object
+            data: {
+                session_id: sessionId,
+                customer_id: customerId,
+                start_time: startTime,
+                end_time: endTime
+            },
+        });
+        console.log({response})
+        return response;
     } catch (error) {
-      return error;
+        return error;
     }
   };
   
