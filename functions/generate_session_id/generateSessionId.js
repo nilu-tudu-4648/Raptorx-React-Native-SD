@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CryptoJS from 'react-native-crypto-js';
+import { SHA256 } from 'crypto-js';
 
 const generateSessionId = async (apiKey) => {
     try {
@@ -14,7 +14,7 @@ const generateSessionId = async (apiKey) => {
 
         const startTime = new Date().toISOString();
         const dataToHash = `${apiKey}_${startTime}`;
-        const sessionId = CryptoJS.SHA256(dataToHash).toString().slice(0, 30);
+        const sessionId = SHA256(dataToHash).toString().slice(0, 30);
 
         // Store sessionId and startTime in AsyncStorage
         await AsyncStorage.setItem('sessionId', sessionId);

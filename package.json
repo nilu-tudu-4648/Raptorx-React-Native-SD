@@ -17,9 +17,9 @@
     "@react-native-community/geolocation": "^3.2.0",
     "@react-navigation/native": "^6.1.17",
     "axios": "^1.6.8",
+    "crypto-js": "^4.2.0",
     "react": "18.2.0",
     "react-native": "0.73.6",
-    "react-native-crypto-js": "^1.0.0",
     "react-native-fs": "^2.20.0",
     "react-native-localize": "^3.0.6",
     "react-native-sensors": "^7.3.6"
