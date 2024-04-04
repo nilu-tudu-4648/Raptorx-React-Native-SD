@@ -19,7 +19,7 @@ const generateSessionId = async (apiKey) => {
         // Store sessionId and startTime in AsyncStorage
         await AsyncStorage.setItem('sessionId', sessionId);
         await AsyncStorage.setItem('start_time', startTime);
-
+ console.log(sessionId,'generateSessionId')
         return sessionId;
     } catch (error) {
         throw error;

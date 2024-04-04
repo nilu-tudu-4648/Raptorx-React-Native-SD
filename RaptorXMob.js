@@ -215,7 +215,7 @@
 //   }
 // }
 import { generateSessionId, createSessionData, clearSessionData } from "./functions/generate_session_id/generateSessionId";
-import { AsyncStorage } from 'react-native'; // Import AsyncStorage from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Correct import
 import API from "./api"; // Import API class from your API file
 
 class RaptorX {
