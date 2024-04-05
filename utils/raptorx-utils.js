@@ -28,6 +28,14 @@ function getDateInSecs(date) {
   
     return typeof value !== "undefined";
   }
+  function bytesToMB(bytes, decimals = 2) {
+  if (bytes === 0) return "0 MB";
+
+  const MB = 1024 * 1024; // Conversion factor (1 KiB = 1024 bytes)
+  const mb = bytes / MB;
+
+  return mb.toFixed(decimals) + " MB";
+}
 
  export {
     normalizeDate,
@@ -36,5 +44,6 @@ function getDateInSecs(date) {
     getDateInSecs,
     isDefined,
     isNonNullObject,
+    bytesToMB
   }
   
