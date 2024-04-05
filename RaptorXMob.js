@@ -214,10 +214,9 @@
 //     throw error; // Re-throw the error for handling at higher levels if needed
 //   }
 // }
-import { generateSessionId, createSessionData, clearSessionData } from "./functions/generate_session_id/generateSessionId";
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Correct import
-import API from "./api"; // Import API class from your API file
-
+import API from "./api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {generateSessionId,createSessionData,clearSessionData} from './functions/generate_session_id/generateSessionId'
 class RaptorX {
   constructor(options = {}) {
     const { api_key, headers } = options;
@@ -232,30 +231,38 @@ class RaptorX {
       api_key,
       headers,
     });
-
-    // Generate session ID using the provided API key and store it as a property
-    this.sessionId = generateSessionId(api_key);
   }
 
   async createSession() {
     try {
-      // Call createSessionData function passing necessary parameters
-      await createSessionData(this.api, this.sessionId, '9155186701');
+      // Generate session ID using the provided API key
+      const sessionId = await generateSessionId(this.api_key);
+      await createSessionData(this.api, sessionId, '9155186701');
       console.log("Session created successfully.");
     } catch (error) {
       console.error('Error creating session:', error);
-      throw error; // Re-throw the error for handling at higher levels if needed
+      throw error;
     }
   }
 
   async clearSession() {
     try {
+      // Retrieve the session ID from AsyncStorage or any other storage mechanism
+      const sessionId = await AsyncStorage.getItem('sessionId');
+      if (!sessionId) {
+        console.log("No session ID found. Skipping session clearing.");
+        return;
+      }
+      
       // Call clearSessionData function passing necessary parameters
-      await clearSessionData(this.api, this.sessionId, '9155186701');
+      await clearSessionData(this.api, sessionId, '9155186701');
       console.log("Session cleared successfully.");
+      
+      // Remove session ID from AsyncStorage or any other storage mechanism
+      await AsyncStorage.removeItem('sessionId');
     } catch (error) {
       console.error('Error clearing session:', error);
-      throw error; // Re-throw the error for handling at higher levels if needed
+      throw error;
     }
   }
 
@@ -266,7 +273,7 @@ class RaptorX {
       console.log("customerId saved successfully.");
     } catch (error) {
       console.error('Error storing customerId:', error);
-      throw error; // Re-throw the error for handling at higher levels if needed
+      throw error;
     }
   }
 }

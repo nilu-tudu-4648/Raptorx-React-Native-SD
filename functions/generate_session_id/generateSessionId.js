@@ -1,6 +1,27 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SHA256 } from 'crypto-js';
-
+import axios from 'axios';
+const makeApiCall = async (api, sessionId, customerId, startTime, endTime) => {
+    const url = "https://server.panoplia.io/api/analytics/session/capture"; // Define the URL directly
+console.log({sessionId})
+    try {
+        const response = await axios.post(url, { // Use axios.post with URL and data
+            session_id: sessionId,
+            customer_id: customerId,
+            start_time: startTime,
+            end_time: endTime // Add end_time if needed
+        }, {
+            headers: {
+                api_key: "9a60f01e9b7d2d5d37a1b134241311fd7dfdbc38",
+            }
+        });
+        console.log("API Response:", response.data); // Log the response data
+        return response;
+    } catch (error) {
+        console.error('Error making API call:', error);
+        throw error;
+    }
+};
 const generateSessionId = async (apiKey) => {
     try {
         const existingSessionId = await AsyncStorage.getItem('sessionId');
@@ -67,24 +88,8 @@ const clearSessionData = async (api, sessionId, customerId) => {
 //       return error;
 //     }
 //   };
-const makeApiCall = async (api, sessionId, customerId, startTime, endTime) => {
-    const url = "analytics/session/capture"; // Define the URL directly
-  console.log({sessionId})
-    try {
-        const response = await api.post({
-            url: url, // Pass the URL directly, not as part of params object
-            data: {
-                session_id: sessionId,
-                customer_id: customerId,
-                start_time: startTime,
-                end_time: endTime
-            },
-        });
-        console.log({response})
-        return response;
-    } catch (error) {
-        return error;
-    }
-  };
+
+
+
   
 export { generateSessionId, clearSessionData, createSessionData };
