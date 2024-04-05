@@ -10,20 +10,11 @@
 // import RNFS from "react-native-fs";
 // import { useRef, useState } from "react";
 // import KeystrokeDynamicsSDK from "./components/KeystrokeDynamicsSDK";
-// import {
-//   gyroscope,
-//   accelerometer,
-//   magnetometer,
-//   setUpdateIntervalForType,
-//   SensorTypes,
-// } from "react-native-sensors";
+
 // import ScrollSpeedCapture from "./components/ScrollSpeedCapture";
 // import Geolocation from "@react-native-community/geolocation";
 // import ScreenChangeListener from "./components/ScreenChangeListener";
 // import { generateSessionId } from "./functions/generate_session_id/generateSessionId";
-// setUpdateIntervalForType(SensorTypes.gyroscope, 3000);
-// setUpdateIntervalForType(SensorTypes.accelerometer, 3000);
-// setUpdateIntervalForType(SensorTypes.magnetometer, 3000);
 
 // export function captureKeyboardEvents(callback) {
 //   const keyboardDidShowListener = Keyboard.addListener(
@@ -96,16 +87,7 @@
 //     />
 //   );
 // };
-// // export const gyroscopeSubscription = gyroscope.subscribe(
-// //   ({ x, y, z, timestamp }) => console.log({ x, y, z, timestamp }, "gyroscope")
-// // );
-// // export const accelerometerSubscription = accelerometer.subscribe(
-// //   ({ x, y, z, timestamp }) =>
-// //     console.log({ x, y, z, timestamp }, "accelerometerSubscription")
-// // );
-// // export const magnetometersubscription = magnetometer.subscribe(({ x, y, z, timestamp }) =>
-// //   console.log({ x, y, z, timestamp },'magnetometersubscription')
-// // );
+
 // export const ScrollEventCapture = (props) => {
 //   return <ScrollSpeedCapture {...props} />;
 // };
@@ -134,10 +116,16 @@
 //   }
 // }
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "./api";
-import { generateSessionId, createSessionData, clearSessionData } from "./functions/generate_session_id/generateSessionId";
-import getAllDeviceData from './functions/deviceData';
+import {
+  generateSessionId,
+  createSessionData,
+  clearSessionData,
+} from "./functions/generate_session_id/generateSessionId";
+import getAllDeviceData from "./functions/deviceData";
+import getSensorsData from "./functions/sensorsData";
+
 class RaptorX {
   constructor(options = {}) {
     const { api_key, headers } = options;
@@ -156,14 +144,14 @@ class RaptorX {
 
   async createSession() {
     try {
-      const customerId = '9155186701';
+      const customerId = "9155186701";
       // Generate session ID using the provided API key
       const sessionId = await generateSessionId(this.api_key);
       await this.storeCustomerID(customerId);
       await createSessionData(this.api, sessionId, customerId);
       console.log("Session created successfully.");
     } catch (error) {
-      console.error('Error creating session:', error);
+      console.error("Error creating session:", error);
       throw error;
     }
   }
@@ -171,41 +159,55 @@ class RaptorX {
   async clearSession() {
     try {
       // Retrieve the session ID from AsyncStorage or any other storage mechanism
-      const sessionId = await AsyncStorage.getItem('sessionId');
+      const sessionId = await AsyncStorage.getItem("sessionId");
       if (!sessionId) {
         console.log("No session ID found. Skipping session clearing.");
         return;
       }
-      
+
       // Call clearSessionData function passing necessary parameters
-      await clearSessionData(this.api, sessionId, '9155186701');
+      await clearSessionData(this.api, sessionId, "9155186701");
       console.log("Session cleared successfully.");
-      
+
       // Remove session ID from AsyncStorage or any other storage mechanism
-      await AsyncStorage.removeItem('sessionId');
+      await AsyncStorage.removeItem("sessionId");
     } catch (error) {
-      console.error('Error clearing session:', error);
+      console.error("Error clearing session:", error);
       throw error;
     }
   }
 
   async storeCustomerID(customerId) {
     try {
-      await AsyncStorage.setItem('customerId', customerId);
+      await AsyncStorage.setItem("customerId", customerId);
       console.log("customerId saved successfully.");
     } catch (error) {
-      console.error('Error storing customerId:', error);
+      console.error("Error storing customerId:", error);
       throw error;
     }
   }
 
   async initDeviceData() {
-    const sessionId = await AsyncStorage.getItem('sessionId');
-    const customerId = await AsyncStorage.getItem('customerId');
-    this.deviceData = await getAllDeviceData(this.api, sessionId, customerId);
+    try {
+      const sessionId = await AsyncStorage.getItem("sessionId");
+      const customerId = await AsyncStorage.getItem("customerId");
+      this.deviceData = await getAllDeviceData(this.api, sessionId, customerId);
+    } catch (error) {
+      console.error("Error initializing device data:", error);
     }
+  }
 
+  async initSensorsData() {
+    try {
+      const sessionId = await AsyncStorage.getItem("sessionId");
+      const customerId = await AsyncStorage.getItem("customerId");
+      this.sensordata = await getSensorsData(this.api, sessionId, customerId);
+      console.log("Sensor data initialized successfully.");
+    } catch (error) {
+      console.error("Error initializing sensor data:", error);
+      throw error;
+    }
+  }
 }
 
 export default RaptorX;
-
