@@ -1,5 +1,6 @@
 import { gyroscope, accelerometer, magnetometer, setUpdateIntervalForType, SensorTypes } from "react-native-sensors";
 import axios from "axios";
+import { formatDate } from "../../utils/raptorx-utils";
 
 const makeSensorsDataApiCall = async (
   api,
@@ -16,12 +17,14 @@ const makeSensorsDataApiCall = async (
       z,
       sensor_type
     } = otherData;
+
+    const formattedTimestamp = formatDate(timestamp);
     const sensorsDataResult = await axios.post(
       url,
       {
         session_id: sessionId,
         customer_id: customerId,
-        timestamp,
+        timestamp:formattedTimestamp,
         x,
         y,
         z,
