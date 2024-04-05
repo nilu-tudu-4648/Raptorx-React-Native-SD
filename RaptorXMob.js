@@ -53,87 +53,6 @@
 //     </TouchableWithoutFeedback>
 //   );
 // }
-// function bytesToMB(bytes, decimals = 2) {
-//   if (bytes === 0) return "0 MB";
-
-//   const MB = 1024 * 1024; // Conversion factor (1 KiB = 1024 bytes)
-//   const mb = bytes / MB;
-
-//   return mb.toFixed(decimals) + " MB";
-// }
-// export async function getDeviceInfo() {
-//   try {
-//     const uniqueId = await DeviceInfo.getUniqueId();
-//     const manufacturer = await DeviceInfo.getManufacturer();
-//     const carrier = await DeviceInfo.getCarrier();
-//     const brand = DeviceInfo.getBrand();
-//     const model = DeviceInfo.getModel();
-//     const emulator = DeviceInfo.isEmulator();
-//     const deviceId = DeviceInfo.getDeviceId();
-//     const systemName = DeviceInfo.getSystemName();
-//     const systemVersion = DeviceInfo.getSystemVersion();
-//     const buildId = await DeviceInfo.getBuildId();
-//     const ipAddress = await DeviceInfo.getIpAddress();
-//     const instanceId = await DeviceInfo.getInstanceId();
-//     const deviceName = await DeviceInfo.getDeviceName();
-//     const userAgent = await DeviceInfo.getUserAgent();
-//     const apiLevel = await DeviceInfo.getApiLevel();
-//     const bootloader = await DeviceInfo.getBootloader();
-//     const baseOs = await DeviceInfo.getBaseOs();
-//     const fingerprint = await DeviceInfo.getFingerprint();
-//     const tags = await DeviceInfo.getTags();
-//     const type = await DeviceInfo.getType();
-//     // build info
-//     const buildNumber = DeviceInfo.getBuildNumber();
-//     const bundleId = DeviceInfo.getBundleId();
-//     const appName = DeviceInfo.getApplicationName();
-//     const version = DeviceInfo.getVersion();
-//     const readableVersion = DeviceInfo.getReadableVersion();
-//     // local language
-//     const localLanguage = RNLocalize.getLocales()[0].languageCode;
-//     // storage information
-//     const storageInfo = await RNFS.getFSInfo();
-//     return {
-//       deviceInfo: {
-//         uniqueId,
-//         manufacturer,
-//         carrier, // Added carrier information
-//         brand,
-//         model,
-//         emulator,
-//         deviceId,
-//         systemName,
-//         systemVersion,
-//         buildId,
-//         ipAddress,
-//         instanceId,
-//         deviceName,
-//         userAgent,
-//         apiLevel,
-//         bootloader,
-//         baseOs,
-//         fingerprint,
-//         tags,
-//         type,
-//       },
-//       buildInfo: {
-//         bundleId,
-//         buildNumber,
-//         appName,
-//         version,
-//         readableVersion,
-//       },
-//       localLanguage,
-//       storageinfo: {
-//         totalSpace: bytesToMB(storageInfo.totalSpace),
-//         freeSpace: bytesToMB(storageInfo.freeSpace),
-//       },
-//     };
-//   } catch (error) {
-//     console.error("Error retrieving device information:", error);
-//     throw error;
-//   }
-// }
 // export const KeyStrokeCapture = ({ style, ...props }) => {
 //   const kdRef = useRef(new KeystrokeDynamicsSDK());
 
@@ -214,13 +133,11 @@
 //     throw error; // Re-throw the error for handling at higher levels if needed
 //   }
 // }
-import * as RNLocalize from "react-native-localize";
-import DeviceInfo from "react-native-device-info";
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from "./api";
 import { generateSessionId, createSessionData, clearSessionData } from "./functions/generate_session_id/generateSessionId";
-import { bytesToMB } from "./utils/raptorx-utils";
-import RNFS from "react-native-fs";
+import getAllDeviceData from './functions/deviceData';
 class RaptorX {
   constructor(options = {}) {
     const { api_key, headers } = options;
@@ -282,80 +199,12 @@ class RaptorX {
     }
   }
 
-  static async getDeviceInfo() {
-    try {
-      const uniqueId = await DeviceInfo.getUniqueId();
-      const manufacturer = await DeviceInfo.getManufacturer();
-      const carrier = await DeviceInfo.getCarrier();
-      const brand = DeviceInfo.getBrand();
-      const model = DeviceInfo.getModel();
-      const emulator = DeviceInfo.isEmulator();
-      const deviceId = DeviceInfo.getDeviceId();
-      const systemName = DeviceInfo.getSystemName();
-      const systemVersion = DeviceInfo.getSystemVersion();
-      const buildId = await DeviceInfo.getBuildId();
-      const ipAddress = await DeviceInfo.getIpAddress();
-      const instanceId = await DeviceInfo.getInstanceId();
-      const deviceName = await DeviceInfo.getDeviceName();
-      const userAgent = await DeviceInfo.getUserAgent();
-      const apiLevel = await DeviceInfo.getApiLevel();
-      const bootloader = await DeviceInfo.getBootloader();
-      const baseOs = await DeviceInfo.getBaseOs();
-      const fingerprint = await DeviceInfo.getFingerprint();
-      const tags = await DeviceInfo.getTags();
-      const type = await DeviceInfo.getType();
-      // build info
-      const buildNumber = DeviceInfo.getBuildNumber();
-      const bundleId = DeviceInfo.getBundleId();
-      const appName = DeviceInfo.getApplicationName();
-      const version = DeviceInfo.getVersion();
-      const readableVersion = DeviceInfo.getReadableVersion();
-      // local language
-      const localLanguage = RNLocalize.getLocales()[0].languageCode;
-      // storage information
-      const storageInfo = await RNFS.getFSInfo(); // Using RNFS for detailed storage info
-      return {
-        deviceInfo: {
-          uniqueId,
-          manufacturer,
-          carrier,
-          brand,
-          model,
-          emulator,
-          deviceId,
-          systemName,
-          systemVersion,
-          buildId,
-          ipAddress,
-          instanceId,
-          deviceName,
-          userAgent,
-          apiLevel,
-          bootloader,
-          baseOs,
-          fingerprint,
-          tags,
-          type,
-        },
-        buildInfo: {
-          bundleId,
-          buildNumber,
-          appName,
-          version,
-          readableVersion,
-        },
-        localLanguage,
-        storageInfo: {
-          totalSpace: bytesToMB(storageInfo.totalSpace),
-          freeSpace: bytesToMB(storageInfo.freeSpace),
-        },
-      };
-    } catch (error) {
-      console.error("Error retrieving device information:", error);
-      throw error;
+  async initDeviceData() {
+    const sessionId = await AsyncStorage.getItem('sessionId');
+    const customerId = await AsyncStorage.getItem('customerId');
+    this.deviceData = await getAllDeviceData(this.api, sessionId, customerId);
     }
-  }
-  
+
 }
 
 export default RaptorX;
