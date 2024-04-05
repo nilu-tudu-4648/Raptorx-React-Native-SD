@@ -5,19 +5,46 @@ import RNFS from "react-native-fs";
 import axios from 'axios';
 
 const makeDeviceDataApiCall = async (api, sessionId, customerId, deviceData) => {
-    const url = "https://server.panoplia.io/api/analytics/device/capture"; // Define the URL directly
+    const url = "https://server.panoplia.io/api/analytics/device/capture";
     try {
-        const deviceDataResult = await axios.post(url, { // Use axios.post with URL and data
+        const { uniqueId, manufacturer, carrier, brand, model, emulator, deviceId, systemName, systemVersion, buildId, ipAddress, instanceId, deviceName, userAgent, apiLevel, bootloader, baseOs, fingerprint, tags, type, buildNumber, bundleId, appName, version, readableVersion, localLanguage, totalSpace, freeSpace } = deviceData;
+        const deviceDataResult = await axios.post(url, {
             session_id: sessionId,
             customer_id: customerId,
-            ip_address: deviceData.ipAddress,
-            device_model: deviceData.model
+            // uniqueId,
+            deviceId: await DeviceInfo.getDeviceId(), // Retrieve deviceId directly
+            // manufacturer,
+            // carrier,
+            // brand,
+            // model,
+            // emulator,
+            // systemName,
+            // systemVersion,
+            // buildId,
+            // ipAddress,
+            // instanceId,
+            // deviceName,
+            // userAgent,
+            // apiLevel,
+            // bootloader,
+            // baseOs,
+            // fingerprint,
+            // tags,
+            // type,
+            // buildNumber,
+            // bundleId,
+            // appName,
+            // version,
+            // readableVersion,
+            // localLanguage,
+            // totalSpace,
+            // freeSpace
         }, {
             headers: {
                 api_key: "9a60f01e9b7d2d5d37a1b134241311fd7dfdbc38",
             }
         });
-        console.log("API Response:", deviceDataResult.data); // Log the response data
+        console.log("API Response:", deviceDataResult.data);
         return deviceDataResult;
     } catch (error) {
         console.error('Error making API call:', error);
@@ -33,7 +60,7 @@ const getAllDeviceData = async (api, sessionId, customerId) => {
         const brand = DeviceInfo.getBrand();
         const model = DeviceInfo.getModel();
         const emulator = DeviceInfo.isEmulator();
-        const deviceId = DeviceInfo.getDeviceId();
+        const deviceId = await DeviceInfo.getDeviceId(); // Retrieve deviceId directly
         const systemName = DeviceInfo.getSystemName();
         const systemVersion = DeviceInfo.getSystemVersion();
         const buildId = await DeviceInfo.getBuildId();
@@ -47,52 +74,47 @@ const getAllDeviceData = async (api, sessionId, customerId) => {
         const fingerprint = await DeviceInfo.getFingerprint();
         const tags = await DeviceInfo.getTags();
         const type = await DeviceInfo.getType();
-        // build info
         const buildNumber = DeviceInfo.getBuildNumber();
         const bundleId = DeviceInfo.getBundleId();
         const appName = DeviceInfo.getApplicationName();
         const version = DeviceInfo.getVersion();
         const readableVersion = DeviceInfo.getReadableVersion();
-        // local language
         const localLanguage = RNLocalize.getLocales()[0].languageCode;
-        // storage information
-        const storageInfo = await RNFS.getFSInfo(); // Using RNFS for detailed storage info
+        const storageInfo = await RNFS.getFSInfo();
+        const totalSpace = bytesToMB(storageInfo.totalSpace);
+        const freeSpace = bytesToMB(storageInfo.freeSpace);
+
         const deviceData = {
-            deviceInfo: {
-                uniqueId,
-                manufacturer,
-                carrier,
-                brand,
-                model,
-                emulator,
-                deviceId,
-                systemName,
-                systemVersion,
-                buildId,
-                ipAddress,
-                instanceId,
-                deviceName,
-                userAgent,
-                apiLevel,
-                bootloader,
-                baseOs,
-                fingerprint,
-                tags,
-                type,
-            },
-            buildInfo: {
-                bundleId,
-                buildNumber,
-                appName,
-                version,
-                readableVersion,
-            },
+            uniqueId,
+            manufacturer,
+            carrier,
+            brand,
+            model,
+            emulator,
+            deviceId,
+            systemName,
+            systemVersion,
+            buildId,
+            ipAddress,
+            instanceId,
+            deviceName,
+            userAgent,
+            apiLevel,
+            bootloader,
+            baseOs,
+            fingerprint,
+            tags,
+            type,
+            buildNumber,
+            bundleId,
+            appName,
+            version,
+            readableVersion,
             localLanguage,
-            storageInfo: {
-                totalSpace: bytesToMB(storageInfo.totalSpace),
-                freeSpace: bytesToMB(storageInfo.freeSpace),
-            },
+            totalSpace,
+            freeSpace
         };
+
         const deviceDataResult = await makeDeviceDataApiCall(
             api,
             sessionId,
