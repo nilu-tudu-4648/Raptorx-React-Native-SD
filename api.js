@@ -1,81 +1,69 @@
-import axios from "axios";
-import { isNonNullObject } from "./utils/raptorx-utils"; // Assuming you have this utility function
-
-const allowedHeaders = {
-  "Content-Type": "application/json",
-};
-
-function getValidHeaders(headers) {
-  const result = {};
-
-  if (!isNonNullObject(headers)) {
-    return result;
-  }
-
-  for (const headerName in headers) {
-    if (allowedHeaders.hasOwnProperty(headerName)) {
-      result[headerName] = headers[headerName];
-    }
-  }
-
-  return result;
-}
+import axios from 'axios';
 
 class API {
   constructor(options) {
-    this.axiosInstance = axios.create({
-      baseURL: options.hostUrl,
-      headers: {
-        ...getValidHeaders(options.headers),
-        apiKey: options.api_key,
-      },
-      auth: {},
-      json: true,
-    });
+    this.hostUrl = options.hostUrl;
+    this.api_key = options.api_key;
+    this.headers = options.headers || {};
   }
 
-  getEntityUrl(params) {
-    return `/api${params && params.url ? "/" + params.url : ""}`;
-  }
-
-  async post(params, cb) {
+  async post(url, data, headers = {}) {
     try {
-      const response = await this.axiosInstance.post(
-        this.getEntityUrl(params.url),
-        params.data,
-        {
-          headers: getValidHeaders(params.headers),
-        }
-      );
-      return cb ? cb(null, response) : response;
-    } catch (error) {
-      return cb ? cb(error) : Promise.reject(error);
-    }
-  }
-
-  async put(params, cb) {
-    try {
-      const response = await this.axiosInstance.put(
-        this.getEntityUrl(params),
-        params.data,
-        {
-          headers: getValidHeaders(params.headers),
-        }
-      );
-      return cb ? cb(null, response) : response;
-    } catch (error) {
-      return cb ? cb(error) : Promise.reject(error);
-    }
-  }
-
-  async delete(params, cb) {
-    try {
-      const response = await this.axiosInstance.delete(this.getEntityUrl(params), {
-        headers: getValidHeaders(params.headers),
+      const response = await axios.post(`${this.hostUrl}/${url}`, data, {
+        headers: {
+          ...this.headers,
+          ...headers,
+          api_key: this.api_key,
+        },
       });
-      return cb ? cb(null, response) : response;
+      return response.data;
     } catch (error) {
-      return cb ? cb(error) : Promise.reject(error);
+      throw new Error(`Failed to make POST request to ${url}: ${error.message}`);
+    }
+  }
+
+  async put(url, data, headers = {}) {
+    try {
+      const response = await axios.put(`${this.hostUrl}/${url}`, data, {
+        headers: {
+          ...this.headers,
+          ...headers,
+          api_key: this.api_key,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(`Failed to make PUT request to ${url}: ${error.message}`);
+    }
+  }
+
+  async delete(url, headers = {}) {
+    try {
+      const response = await axios.delete(`${this.hostUrl}/${url}`, {
+        headers: {
+          ...this.headers,
+          ...headers,
+          api_key: this.api_key,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(`Failed to make DELETE request to ${url}: ${error.message}`);
+    }
+  }
+
+  async get(url, headers = {}) {
+    try {
+      const response = await axios.get(`${this.hostUrl}/${url}`, {
+        headers: {
+          ...this.headers,
+          ...headers,
+          api_key: this.api_key,
+        },
+      });
+      return response;
+    } catch (error) {
+      throw new Error(`Failed to make GET request to ${url}: ${error.message}`);
     }
   }
 }

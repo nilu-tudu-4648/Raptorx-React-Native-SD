@@ -127,29 +127,30 @@ import getAllDeviceData from "./functions/deviceData";
 import getSensorsData from "./functions/sensorsData";
 
 class RaptorX {
-  constructor(options = {}) {
-    const { api_key, headers } = options;
-
-    if (!api_key) {
-      throw new Error("`api_key` is mandatory");
-    }
-
+  constructor(api_key) {
     this.api_key = api_key;
+    this.apiBaseUrl = "https://server.panoplia.io";
     this.api = new API({
-      hostUrl: "https://server.panoplia.io",
-      api_key,
-      headers,
+      hostUrl: this.apiBaseUrl,
+      api_key: this.api_key,
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
   }
-
+  // async calltheapi() {
+  //   const data = await makeAPICall(this.api, this.apiKey);
+  //   return data;
+  // }
   async createSession() {
     try {
-      const customerId = "9155186701";
+      const customerId = "8002567691";
       // Generate session ID using the provided API key
       const sessionId = await generateSessionId(this.api_key);
+      console.log("sessionid created", sessionId);
       await this.storeCustomerID(customerId);
-      await createSessionData(this.api, sessionId, customerId);
-      console.log("Session created successfully.");
+      const data = await createSessionData(this.api, sessionId, customerId);
+      console.log("Session created successfully.", data);
     } catch (error) {
       console.error("Error creating session:", error);
       throw error;
