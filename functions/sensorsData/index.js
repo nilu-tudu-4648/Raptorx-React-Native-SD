@@ -1,45 +1,29 @@
 import { gyroscope, accelerometer, magnetometer, setUpdateIntervalForType, SensorTypes } from "react-native-sensors";
-import axios from "axios";
 import { formatDate } from "../../utils/raptorx-utils";
 
 const makeSensorsDataApiCall = async (
   api,
-  sessionId,
-  customerId,
+  session_id,
+  customer_id,
   otherData
 ) => {
-  const url = "https://server.panoplia.io/api/analytics/sensor/capture";
+  const url = "api/analytics/sensor/capture";
   try {
-    const {
-      timestamp,
+    const { timestamp, x, y, z, sensor_type } = otherData;
+    const formattedTimestamp = formatDate(timestamp);
+    const formData = {
+      session_id,
+      customer_id,
+      timestamp: formattedTimestamp,
       x,
       y,
       z,
-      sensor_type
-    } = otherData;
-
-    const formattedTimestamp = formatDate(timestamp);
-    const sensorsDataResult = await axios.post(
-      url,
-      {
-        session_id: sessionId,
-        customer_id: customerId,
-        timestamp:formattedTimestamp,
-        x,
-        y,
-        z,
-        sensor_type,
-      },
-      {
-        headers: {
-          api_key: "9a60f01e9b7d2d5d37a1b134241311fd7dfdbc38",
-        },
-      }
-    );
-    console.log("API Response:", sensorsDataResult.data);
+      sensor_type,
+    };
+    const sensorsDataResult = await api.post(url, formData);
     return sensorsDataResult;
   } catch (error) {
-    console.error("Error making API call:", error);
+    console.error("Error making API call:", error.response.data);
     throw error;
   }
 };
@@ -57,21 +41,17 @@ const getSensorsData = async (api, sessionId, customerId) => {
       makeSensorsDataApiCall(api, sessionId, customerId, otherData);
     });
 
-    // Subscribe to accelerometer data
     const accelerometerSubscription = accelerometer.subscribe(({ x, y, z, timestamp }) => {
       const otherData = { x, y, z, timestamp, sensor_type: 'accelerometer' };
       makeSensorsDataApiCall(api, sessionId, customerId, otherData);
     });
 
-    // Subscribe to magnetometer data
     const magnetometerSubscription = magnetometer.subscribe(({ x, y, z, timestamp }) => {
       const otherData = { x, y, z, timestamp, sensor_type: 'magnetometer' };
       makeSensorsDataApiCall(api, sessionId, customerId, otherData);
     });
 
-    // Return the subscriptions (optional)
-    return { gyroscopeSubscription, accelerometerSubscription, magnetometerSubscription };
-  } catch (error) {
+ } catch (error) {
     console.error("Error retrieving device information:", error);
     throw error;
   }

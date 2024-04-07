@@ -203,8 +203,8 @@ class RaptorX {
     try {
       const sessionId = await AsyncStorage.getItem("sessionId");
       const customerId = await AsyncStorage.getItem("customerId");
-      this.sensordata = await getSensorsData(this.api, sessionId, customerId);
-      console.log("Sensor data initialized successfully.");
+      const sensordata = await getSensorsData(this.api, sessionId, customerId);
+    
     } catch (error) {
       console.error("Error initializing sensor data:", error);
       throw error;
