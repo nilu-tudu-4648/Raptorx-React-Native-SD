@@ -192,7 +192,8 @@ class RaptorX {
     try {
       const sessionId = await AsyncStorage.getItem("sessionId");
       const customerId = await AsyncStorage.getItem("customerId");
-      this.deviceData = await getAllDeviceData(this.api, sessionId, customerId);
+      const deviceData = await getAllDeviceData(this.api, sessionId, customerId);
+      return deviceData
     } catch (error) {
       console.error("Error initializing device data:", error);
     }

@@ -3,69 +3,21 @@ import DeviceInfo from "react-native-device-info";
 import { bytesToMB } from "../../utils/raptorx-utils";
 import RNFS from "react-native-fs";
 
-// const makeDeviceDataApiCall = async (api, sessionId, customerId, deviceData) => {
-//     const url = "https://server.panoplia.io/api/analytics/device/capture";
-//     try {
-//         const { uniqueId, manufacturer, carrier, brand, model, emulator, deviceId, systemName, systemVersion, buildId, ipAddress, instanceId, deviceName, userAgent, apiLevel, bootloader, baseOs, fingerprint, tags, type, buildNumber, bundleId, appName, version, readableVersion, localLanguage, totalSpace, freeSpace } = deviceData;
-//         const deviceDataResult = await api.post(url, {
-//             session_id: sessionId,
-//             customer_id: customerId,
-//             // uniqueId,
-//             deviceId: await DeviceInfo.getDeviceId(), // Retrieve deviceId directly
-//             // manufacturer,
-//             // carrier,
-//             // brand,
-//             // model,
-//             // emulator,
-//             // systemName,
-//             // systemVersion,
-//             // buildId,
-//             // ipAddress,
-//             // instanceId,
-//             // deviceName,
-//             // userAgent,
-//             // apiLevel,
-//             // bootloader,
-//             // baseOs,
-//             // fingerprint,
-//             // tags,
-//             // type,
-//             // buildNumber,
-//             // bundleId,
-//             // appName,
-//             // version,
-//             // readableVersion,
-//             // localLanguage,
-//             // totalSpace,
-//             // freeSpace
-//         }, {
-//             headers: {
-//                 api_key: "9a60f01e9b7d2d5d37a1b134241311fd7dfdbc38",
-//             }
-//         });
-//         console.log("API Response:", deviceDataResult.data);
-//         return deviceDataResult;
-//     } catch (error) {
-//         console.error('Error making API call:', error);
-//         throw error;
-//     }
-// };
 export const makeDeviceDataApiCall = async (
     api, sessionId, customerId, deviceData
   ) => {
     const params = { url: "api/analytics/device/capture" };
-   const {is_emulator}= deviceData
     try {
       const postData = {
         session_id: sessionId,
         customer_id: customerId,
+        device_id:deviceData.device_id
         // uniqueId,
-        deviceId: await DeviceInfo.getDeviceId(), // Retrieve deviceId directly
         // manufacturer,
         // carrier,
         // brand,
         // model,
-        is_emulator,
+        // is_emulator,
         // systemName,
         // systemVersion,
         // buildId,
@@ -89,11 +41,9 @@ export const makeDeviceDataApiCall = async (
         // freeSpace
       };
       const postResponse = await api.post(params.url, postData);
-      console.log("makeDeviceDataApiCall API response:", postResponse);
-  
       return postResponse;
     } catch (error) {
-      console.error("Error making API call:", error);
+      console.error("Error making API call:");
       throw error;
     }
   };
@@ -102,10 +52,10 @@ const getAllDeviceData = async (api, sessionId, customerId) => {
         const uniqueId = await DeviceInfo.getUniqueId();
         const manufacturer = await DeviceInfo.getManufacturer();
         const carrier = await DeviceInfo.getCarrier();
-        const brand = DeviceInfo.getBrand();
-        const model = DeviceInfo.getModel();
-        const is_emulator = DeviceInfo.isEmulator();
-        const deviceId = await DeviceInfo.getDeviceId(); // Retrieve deviceId directly
+        const brand =   DeviceInfo.getBrand();
+        const model =  DeviceInfo.getModel();
+        const is_emulator =await DeviceInfo.isEmulator();
+        const device_id =  DeviceInfo.getDeviceId(); // Retrieve deviceId directly
         const systemName = DeviceInfo.getSystemName();
         const systemVersion = DeviceInfo.getSystemVersion();
         const buildId = await DeviceInfo.getBuildId();
@@ -136,7 +86,7 @@ const getAllDeviceData = async (api, sessionId, customerId) => {
             brand,
             model,
             is_emulator,
-            deviceId,
+            device_id,
             systemName,
             systemVersion,
             buildId,
@@ -159,7 +109,6 @@ const getAllDeviceData = async (api, sessionId, customerId) => {
             totalSpace,
             freeSpace
         };
-
         const deviceDataResult = await makeDeviceDataApiCall(
             api,
             sessionId,

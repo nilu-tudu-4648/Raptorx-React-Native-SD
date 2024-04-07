@@ -13,7 +13,7 @@ class API {
         headers: {
           ...this.headers,
           ...headers,
-          api_key: this.api_key,
+          apiKey: this.api_key,
         },
       });
       return response.data;
@@ -28,7 +28,7 @@ class API {
         headers: {
           ...this.headers,
           ...headers,
-          api_key: this.api_key,
+          apiKey: this.api_key,
         },
       });
       return response.data;
@@ -43,27 +43,12 @@ class API {
         headers: {
           ...this.headers,
           ...headers,
-          api_key: this.api_key,
+          apiKey: this.api_key,
         },
       });
       return response.data;
     } catch (error) {
       throw new Error(`Failed to make DELETE request to ${url}: ${error.message}`);
-    }
-  }
-
-  async get(url, headers = {}) {
-    try {
-      const response = await axios.get(`${this.hostUrl}/${url}`, {
-        headers: {
-          ...this.headers,
-          ...headers,
-          api_key: this.api_key,
-        },
-      });
-      return response;
-    } catch (error) {
-      throw new Error(`Failed to make GET request to ${url}: ${error.message}`);
     }
   }
 }
