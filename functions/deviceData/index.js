@@ -9,7 +9,8 @@ export const makeDeviceDataApiCall = async (
   customerId,
   deviceData
 ) => {
-  const { ip_address, device_id, is_emulator, device_model, platform } =
+  const { ip_address, device_id, is_emulator,
+     device_model,os_name,os_version ,available_storage} =
     deviceData;
   const params = { url: "api/analytics/device/capture" };
   try {
@@ -21,7 +22,8 @@ export const makeDeviceDataApiCall = async (
       device_model,
       is_emulator,
       available_storage,
-      platform,
+      os_name,
+      os_version
     };
     console.log(postData);
     const postResponse = await api.post(params.url, postData);
@@ -40,8 +42,8 @@ const getAllDeviceData = async (api, sessionId, customerId) => {
     const device_model = DeviceInfo.getModel();
     const is_emulator = await DeviceInfo.isEmulator();
     const device_id = DeviceInfo.getDeviceId(); // Retrieve deviceId directly
-    const platform = DeviceInfo.getSystemName();
-    const systemVersion = DeviceInfo.getSystemVersion();
+    const os_name = DeviceInfo.getSystemName();
+    const os_version = DeviceInfo.getSystemVersion();
     const buildId = await DeviceInfo.getBuildId();
     const ip_address = await DeviceInfo.getIpAddress();
     const instanceId = await DeviceInfo.getInstanceId();
@@ -70,8 +72,8 @@ const getAllDeviceData = async (api, sessionId, customerId) => {
       device_model,
       is_emulator,
       device_id,
-      platform,
-      systemVersion,
+      os_name,
+      os_version,
       buildId,
       ip_address,
       instanceId,
