@@ -1,35 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SHA256 } from "crypto-js";
-import axios from "axios";
-import API from "../../api";
-const api = new API({
-  hostUrl: "https://server.panoplia.io",
-  api_key: "9a60f01e9b7d2d5d37a1b134241311fd7dfdbc38",
-  headers: {
-    // Any custom headers you want to include
-  },
-});
-// const makeApiCall = async (api, sessionId, customerId, startTime, endTime) => {
-//     const url = "https://server.panoplia.io/api/analytics/session/capture";
-// console.log({sessionId})
-//     try {
-//         const response = await axios.post(url, {
-//             session_id: sessionId,
-//             customer_id: customerId,
-//             start_time: startTime,
-//             end_time: endTime
-//         }, {
-//             headers: {
-//                 api_key: "9a60f01e9b7d2d5d37a1b134241311fd7dfdbc38",
-//             }
-//         });
-//         console.log("API Response:", response.data);
-//         return response;
-//     } catch (error) {
-//         console.error('Error making API call:', error);
-//         throw error;
-//     }
-// };
 const generateSessionId = async (apiKey) => {
   try {
     const existingSessionId = await AsyncStorage.getItem("sessionId");
@@ -70,9 +40,7 @@ const clearSessionData = async (api, sessionId, customerId) => {
 
     await makeApiCall(api, sessionId, customerId, startTime, endTime);
 
-    await AsyncStorage.removeItem("sessionId");
-    await AsyncStorage.removeItem("start_time");
-    await AsyncStorage.removeItem("customerId");
+    await AsyncStorage.clear()
   } catch (error) {
     console.error("Error clearing session data:", error);
   }
@@ -93,31 +61,11 @@ export const makeApiCall = async (
       end_time: endTime,
     };
     const postResponse = await apiInstance.post(params.url, postData);
-    console.log("POST API response:", postResponse);
-
     return postResponse;
   } catch (error) {
     console.error("Error making API call:", error);
     throw error;
   }
 };
-// const makeApiCall = async (apiInstance, sessionId, customerId, startTime, endTime) => {
-//     const params = { url: "analytics/session/capture" };
-//     try {
-//       const response = await api.post({
-//         url: params.url,
-//         data: {
-//           session_id: sessionId,
-//           customer_id: customerId,
-//           start_time: startTime,
-//           end_time: endTime
-//         }
-//       });
-//       console.log('new api worked',response)
-//       return response;
-//     } catch (error) {
-//       return error;
-//     }
-//   };
 
 export { generateSessionId, clearSessionData, createSessionData };

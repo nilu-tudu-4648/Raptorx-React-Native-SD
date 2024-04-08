@@ -1,4 +1,4 @@
-// import DeviceInfo from "react-native-device-info";
+
 // import {
 //   Keyboard,
 //   StyleSheet,
@@ -6,14 +6,12 @@
 //   TouchableWithoutFeedback,
 //   View,
 // } from "react-native";
-// import * as RNLocalize from "react-native-localize";
-// import RNFS from "react-native-fs";
 // import { useRef, useState } from "react";
 // import KeystrokeDynamicsSDK from "./components/KeystrokeDynamicsSDK";
 
 // import ScrollSpeedCapture from "./components/ScrollSpeedCapture";
 // import Geolocation from "@react-native-community/geolocation";
-// import ScreenChangeListener from "./components/ScreenChangeListener";
+import ScreenChangeListener from "./components/ScreenChangeListener";
 // import { generateSessionId } from "./functions/generate_session_id/generateSessionId";
 
 // export function captureKeyboardEvents(callback) {
@@ -94,27 +92,8 @@
 // export const getCurrentLocation = () => {
 //   Geolocation.getCurrentPosition((info) => console.log(info));
 // };
-// export const NavigationCapture = () => {
-//   return <ScreenChangeListener />;
-// };
-// export function generateSessionIdFunc(apiKey) {
-//   try {
-//     // Generate your session ID here, using the provided API key
-//     const sessionId = generateSessionId(apiKey);
 
-//     // Create an API instance using the provided API key
-//     const apiInstance = createAPIInstance(apiKey);
-// console.log({apiInstance})
-//     // Assuming you have a function to create a session
-//     // You may use the API instance to perform API calls
-//     const createS = createSession(apiInstance,sessionId,'9155186701');
 
-//     return createS;
-//   } catch (error) {
-//     console.error('Error generating session ID:', error);
-//     throw error; // Re-throw the error for handling at higher levels if needed
-//   }
-// }
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "./api";
@@ -125,6 +104,7 @@ import {
 } from "./functions/generate_session_id/generateSessionId";
 import getAllDeviceData from "./functions/deviceData";
 import getSensorsData from "./functions/sensorsData";
+import useScreenChangeListener from "./components/ScreenChangeListener";
 
 class RaptorX {
   constructor(api_key) {
@@ -138,19 +118,17 @@ class RaptorX {
       },
     });
   }
-  // async calltheapi() {
-  //   const data = await makeAPICall(this.api, this.apiKey);
-  //   return data;
-  // }
-  async createSession() {
+ navigationCapture () {
+   useScreenChangeListener()
+};
+  async createSession(customerId) {
     try {
-      const customerId = "8002567691";
-      // Generate session ID using the provided API key
+    console.log({customerId})
       const sessionId = await generateSessionId(this.api_key);
-      console.log("sessionid created", sessionId);
       await this.storeCustomerID(customerId);
-      const data = await createSessionData(this.api, sessionId, customerId);
-      console.log("Session created successfully.", data);
+      if(sessionId){
+        await createSessionData(this.api, sessionId, customerId);
+      }
     } catch (error) {
       console.error("Error creating session:", error);
       throw error;
@@ -161,17 +139,13 @@ class RaptorX {
     try {
       // Retrieve the session ID from AsyncStorage or any other storage mechanism
       const sessionId = await AsyncStorage.getItem("sessionId");
+      const customerId = await AsyncStorage.getItem("customerId");
       if (!sessionId) {
         console.log("No session ID found. Skipping session clearing.");
         return;
       }
-
-      // Call clearSessionData function passing necessary parameters
-      await clearSessionData(this.api, sessionId, "9155186701");
+      await clearSessionData(this.api, sessionId, customerId);
       console.log("Session cleared successfully.");
-
-      // Remove session ID from AsyncStorage or any other storage mechanism
-      await AsyncStorage.removeItem("sessionId");
     } catch (error) {
       console.error("Error clearing session:", error);
       throw error;
@@ -181,7 +155,6 @@ class RaptorX {
   async storeCustomerID(customerId) {
     try {
       await AsyncStorage.setItem("customerId", customerId);
-      console.log("customerId saved successfully.");
     } catch (error) {
       console.error("Error storing customerId:", error);
       throw error;
@@ -201,10 +174,8 @@ class RaptorX {
 
   async initSensorsData() {
     try {
-      const sessionId = await AsyncStorage.getItem("sessionId");
       const customerId = await AsyncStorage.getItem("customerId");
-      const sensordata = await getSensorsData(this.api, sessionId, customerId);
-    
+      await getSensorsData(this.api, customerId);
     } catch (error) {
       console.error("Error initializing sensor data:", error);
       throw error;

@@ -1,5 +1,10 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { gyroscope, accelerometer, magnetometer, setUpdateIntervalForType, SensorTypes } from "react-native-sensors";
 import { formatDate } from "../../utils/raptorx-utils";
+
+let gyroscopeSubscription;
+let accelerometerSubscription;
+let magnetometerSubscription;
 
 const makeSensorsDataApiCall = async (
   api,
@@ -21,37 +26,53 @@ const makeSensorsDataApiCall = async (
       sensor_type,
     };
     const sensorsDataResult = await api.post(url, formData);
+    console.log(sensorsDataResult, sensor_type, session_id,customer_id);
     return sensorsDataResult;
   } catch (error) {
-    console.error("Error making API call:", error.response.data);
+    console.error("Error making API call:", error);
     throw error;
   }
 };
 
-const getSensorsData = async (api, sessionId, customerId) => {
+const getSensorsData = async (api, customerId) => {
   try {
     // Set update intervals for sensor types
     setUpdateIntervalForType(SensorTypes.gyroscope, 3000);
     setUpdateIntervalForType(SensorTypes.accelerometer, 3000);
     setUpdateIntervalForType(SensorTypes.magnetometer, 3000);
 
+    // Get session ID from AsyncStorage
+    const sessionId = await AsyncStorage.getItem("sessionId");
+    
     // Subscribe to gyroscope data
-    const gyroscopeSubscription = gyroscope.subscribe(({ x, y, z, timestamp }) => {
+    gyroscopeSubscription = gyroscope.subscribe(({ x, y, z, timestamp }) => {
       const otherData = { x, y, z, timestamp, sensor_type: 'gyroscope' };
-      makeSensorsDataApiCall(api, sessionId, customerId, otherData);
+      if (sessionId) {
+        makeSensorsDataApiCall(api, sessionId, customerId, otherData);
+      }
     });
 
-    const accelerometerSubscription = accelerometer.subscribe(({ x, y, z, timestamp }) => {
+    accelerometerSubscription = accelerometer.subscribe(({ x, y, z, timestamp }) => {
       const otherData = { x, y, z, timestamp, sensor_type: 'accelerometer' };
-      makeSensorsDataApiCall(api, sessionId, customerId, otherData);
+      if (sessionId) {
+        makeSensorsDataApiCall(api, sessionId, customerId, otherData);
+      }
     });
 
-    const magnetometerSubscription = magnetometer.subscribe(({ x, y, z, timestamp }) => {
+    magnetometerSubscription = magnetometer.subscribe(({ x, y, z, timestamp }) => {
       const otherData = { x, y, z, timestamp, sensor_type: 'magnetometer' };
-      makeSensorsDataApiCall(api, sessionId, customerId, otherData);
+      if (sessionId) {
+        makeSensorsDataApiCall(api, sessionId, customerId, otherData);
+      }
     });
 
- } catch (error) {
+    return () => {
+      gyroscopeSubscription.unsubscribe();
+      accelerometerSubscription.unsubscribe();
+      magnetometerSubscription.unsubscribe();
+    };
+
+  } catch (error) {
     console.error("Error retrieving device information:", error);
     throw error;
   }

@@ -1,6 +1,8 @@
+// ScreenChangeListener.js
+import React, { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
-const useScreenChangeListener = () => {
+const ScreenChangeListener = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -11,6 +13,8 @@ const useScreenChangeListener = () => {
     });
     return unsubscribe;
   }, [navigation]);
+
+  return null;
 };
 
-export default useScreenChangeListener;
+export default ScreenChangeListener;
