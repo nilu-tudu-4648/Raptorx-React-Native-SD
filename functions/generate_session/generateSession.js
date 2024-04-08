@@ -33,18 +33,6 @@ const createSessionData = async (api, sessionId, customerId) => {
   }
 };
 
-const clearSessionData = async (api, sessionId, customerId) => {
-  try {
-    const endTime = new Date().toISOString();
-    const startTime = await AsyncStorage.getItem("start_time");
-
-    await makeApiCall(api, sessionId, customerId, startTime, endTime);
-
-    await AsyncStorage.clear()
-  } catch (error) {
-    console.error("Error clearing session data:", error);
-  }
-};
 export const makeApiCall = async (
   apiInstance,
   sessionId,
@@ -68,4 +56,4 @@ export const makeApiCall = async (
   }
 };
 
-export { generateSessionId, clearSessionData, createSessionData };
+export { generateSessionId, createSessionData };

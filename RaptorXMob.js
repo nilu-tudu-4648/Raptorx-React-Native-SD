@@ -100,11 +100,11 @@ import API from "./api";
 import {
   generateSessionId,
   createSessionData,
-  clearSessionData,
-} from "./functions/generate_session_id/generateSessionId";
+} from "./functions/generate_session/generateSession";
 import getAllDeviceData from "./functions/deviceData";
 import getSensorsData from "./functions/sensorsData";
 import useScreenChangeListener from "./components/ScreenChangeListener";
+import clearSessionData from "./functions/generate_session/clearSession";
 
 class RaptorX {
   constructor(api_key) {
