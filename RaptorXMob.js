@@ -93,8 +93,6 @@ import ScreenChangeListener from "./components/ScreenChangeListener";
 //   Geolocation.getCurrentPosition((info) => console.log(info));
 // };
 
-
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import API from "./api";
 import {
@@ -123,7 +121,6 @@ class RaptorX {
 };
   async createSession(customerId) {
     try {
-    console.log({customerId})
       const sessionId = await generateSessionId(this.api_key);
       await this.storeCustomerID(customerId);
       if(sessionId){

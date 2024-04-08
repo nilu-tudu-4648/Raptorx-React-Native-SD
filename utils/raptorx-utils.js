@@ -29,12 +29,12 @@ function getDateInSecs(date) {
     return typeof value !== "undefined";
   }
   function bytesToMB(bytes, decimals = 2) {
-  if (bytes === 0) return "0 MB";
+  if (bytes === 0) return "0";
 
   const MB = 1024 * 1024; // Conversion factor (1 KiB = 1024 bytes)
   const mb = bytes / MB;
 
-  return mb.toFixed(decimals) + " MB";
+  return mb.toFixed(decimals);
 }
 function formatDate (timestamp) {
   const date = new Date(timestamp);
