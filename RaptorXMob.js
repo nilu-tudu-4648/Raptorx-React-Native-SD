@@ -11,8 +11,6 @@
 
 // import ScrollSpeedCapture from "./components/ScrollSpeedCapture";
 // import Geolocation from "@react-native-community/geolocation";
-import ScreenChangeListener from "./components/ScreenChangeListener";
-// import { generateSessionId } from "./functions/generate_session_id/generateSessionId";
 
 // export function captureKeyboardEvents(callback) {
 //   const keyboardDidShowListener = Keyboard.addListener(
@@ -99,13 +97,13 @@ import {
   generateSessionId,
   createSessionData,
 } from "./functions/generate_session/generateSession";
+import { getNavigationData } from "./functions/navigation_Listner";
 import getAllDeviceData from "./functions/deviceData";
 import getSensorsData from "./functions/sensorsData";
-import useScreenChangeListener from "./components/ScreenChangeListener";
 import clearSessionData from "./functions/generate_session/clearSession";
 
 class RaptorX {
-  constructor(api_key) {
+  constructor(api_key, navigation) {
     this.api_key = api_key;
     this.apiBaseUrl = "https://server.panoplia.io";
     this.api = new API({
@@ -115,10 +113,13 @@ class RaptorX {
         "Content-Type": "application/json",
       },
     });
+    this.navigation = navigation; // Set the navigation object during initialization
   }
- navigationCapture () {
-   useScreenChangeListener()
-};
+
+
+  navigationCapture() {
+    getNavigationData(this.api,this.navigation)
+  }
   async createSession(customerId) {
     try {
       const sessionId = await generateSessionId(this.api_key);
@@ -131,7 +132,6 @@ class RaptorX {
       throw error;
     }
   }
-
   async clearSession() {
     try {
       // Retrieve the session ID from AsyncStorage or any other storage mechanism
@@ -148,7 +148,6 @@ class RaptorX {
       throw error;
     }
   }
-
   async storeCustomerID(customerId) {
     try {
       await AsyncStorage.setItem("customerId", customerId);
@@ -157,7 +156,6 @@ class RaptorX {
       throw error;
     }
   }
-
   async initDeviceData() {
     try {
       const sessionId = await AsyncStorage.getItem("sessionId");
@@ -168,7 +166,6 @@ class RaptorX {
       console.error("Error initializing device data:", error);
     }
   }
-
   async initSensorsData() {
     try {
       const customerId = await AsyncStorage.getItem("customerId");

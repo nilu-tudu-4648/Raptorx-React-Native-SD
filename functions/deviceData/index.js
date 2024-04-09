@@ -25,7 +25,6 @@ export const makeDeviceDataApiCall = async (
       os_name,
       os_version
     };
-    console.log(postData);
     const postResponse = await api.post(params.url, postData);
     return postResponse;
   } catch (error) {
