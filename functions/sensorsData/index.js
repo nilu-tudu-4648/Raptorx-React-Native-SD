@@ -26,6 +26,7 @@ const makeSensorsDataApiCall = async (
       sensor_type,
     };
     const sensorsDataResult = await api.post(url, formData);
+    console.log({sensorsDataResult,sensor_type})
     return sensorsDataResult;
   } catch (error) {
     console.error("Error making API call:", error);

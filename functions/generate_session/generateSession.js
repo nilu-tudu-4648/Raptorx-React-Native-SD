@@ -49,6 +49,7 @@ export const makeApiCall = async (
       end_time: endTime,
     };
     const postResponse = await apiInstance.post(params.url, postData);
+    console.log({sessionId,postResponse})
     return postResponse;
   } catch (error) {
     console.error("Error making API call:", error);

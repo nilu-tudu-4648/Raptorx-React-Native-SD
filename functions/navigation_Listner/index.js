@@ -6,10 +6,10 @@ export const makeApiCall = async (
   page_url,
 ) => {
   const params = { url: "api/analytics/events/capture" };
-  
   try {
     const session_id = await AsyncStorage.getItem("sessionId");
     const customer_id = await AsyncStorage.getItem("customerId");
+if(session_id){
     const postData = {
       session_id,
       customer_id,
@@ -17,9 +17,13 @@ export const makeApiCall = async (
       "event_type": "page_capture",
       page_url
     };
-    console.log(postData)
-    const postResponse = await apiInstance.post(params.url, postData);
-    return postResponse;
+    
+    const getNavigationDataResponse = await apiInstance.post(params.url, postData);
+    console.log({getNavigationDataResponse})
+    return getNavigationDataResponse;
+  }else{
+    console.log('session id not found')
+  }
   } catch (error) {
     console.error("Error making API call:", error);
     throw error;
