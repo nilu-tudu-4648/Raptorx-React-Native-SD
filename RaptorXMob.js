@@ -101,7 +101,8 @@ import { getNavigationData } from "./functions/navigation_Listner";
 import getAllDeviceData from "./functions/deviceData";
 import getSensorsData from "./functions/sensorsData";
 import clearSessionData from "./functions/generate_session/clearSession";
-
+// import GPU_SDK from './functions/gpuDetails/GPUModule.kt'
+import NetInfo from '@react-native-community/netinfo';
 class RaptorX {
   constructor(api_key, navigation) {
     this.api_key = api_key;
@@ -172,6 +173,24 @@ class RaptorX {
       await getSensorsData(this.api, customerId);
     } catch (error) {
       console.error("Error initializing sensor data:", error);
+      throw error;
+    }
+  }
+  // async getGpuDetails() {
+  //   try {
+  //     const gpuInfo = await GPU_SDK.getGPUDetails();
+  //     return gpuInfo;
+  //   } catch (error) {
+  //     console.error("Error getting GPU details:", error);
+  //     throw error;
+  //   }
+  // }
+  async getNetwork() {
+    try {
+      const state = await NetInfo.fetch();
+      return state;
+    } catch (error) {
+      console.error("Error getting network details:", error);
       throw error;
     }
   }
