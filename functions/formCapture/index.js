@@ -5,7 +5,6 @@ const makegetElementInfoApiCall = async (
 ) => {
   const url = "api/analytics/forms/capture";
   try {
-
     const sensorsDataResult = await api.post(url, formData);
     return sensorsDataResult;
   } catch (error) {
@@ -14,7 +13,7 @@ const makegetElementInfoApiCall = async (
   }
 };
 
-export const getElementInfo = async (elementId, value, customer_id, timeInSeconds = 60) => {
+export const getElementInfo = async (api,elementId, value, customer_id, timeInSeconds = 60) => {
   const calculateWPM = (text, timeInSeconds) => {
       // Calculate the number of words in the text
       const words = text.trim().split(/\s+/);
@@ -35,7 +34,7 @@ export const getElementInfo = async (elementId, value, customer_id, timeInSecond
 
   try {
       const session_id = await AsyncStorage.getItem("sessionId");
-      const timestamp = new Date().toISOString(); 
+      const timestamp = new Date().toISOString().replace('T', ' ').split('.')[0];
       const elementInfo = {
           session_id,
           customer_id,
