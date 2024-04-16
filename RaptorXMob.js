@@ -1,4 +1,3 @@
-
 // import {
 //   Keyboard,
 //   StyleSheet,
@@ -103,7 +102,7 @@ import getSensorsData from "./functions/sensorsData";
 import clearSessionData from "./functions/generate_session/clearSession";
 import { getElementInfo } from "./functions/formCapture";
 // import GPU_SDK from './functions/gpuDetails/GPUModule.kt'
-import NetInfo from '@react-native-community/netinfo';
+import NetInfo from "@react-native-community/netinfo";
 class RaptorX {
   constructor(api_key, navigation) {
     this.api_key = api_key;
@@ -118,15 +117,14 @@ class RaptorX {
     this.navigation = navigation; // Set the navigation object during initialization
   }
 
-
   navigationCapture() {
-    getNavigationData(this.api,this.navigation)
+    getNavigationData(this.api, this.navigation);
   }
   async createSession(customerId) {
     try {
       const sessionId = await generateSessionId(this.api_key);
       await this.storeCustomerID(customerId);
-      if(sessionId){
+      if (sessionId) {
         await createSessionData(this.api, sessionId, customerId);
       }
     } catch (error) {
@@ -162,8 +160,12 @@ class RaptorX {
     try {
       const sessionId = await AsyncStorage.getItem("sessionId");
       const customerId = await AsyncStorage.getItem("customerId");
-      const deviceData = await getAllDeviceData(this.api, sessionId, customerId);
-      return deviceData
+      const deviceData = await getAllDeviceData(
+        this.api,
+        sessionId,
+        customerId
+      );
+      return deviceData;
     } catch (error) {
       console.error("Error initializing device data:", error);
     }
@@ -195,8 +197,14 @@ class RaptorX {
       throw error;
     }
   }
-  formCapture(e,i){
-    getElementInfo(e,i)
+  async formCapture(e, i) {
+    try {
+      const customerId = await AsyncStorage.getItem("customerId");
+      const res = getElementInfo(this.api, e, i, customerId);
+      return res;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
