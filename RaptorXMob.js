@@ -101,6 +101,7 @@ import { getNavigationData } from "./functions/navigation_Listner";
 import getAllDeviceData from "./functions/deviceData";
 import getSensorsData from "./functions/sensorsData";
 import clearSessionData from "./functions/generate_session/clearSession";
+import { getElementInfo } from "./functions/formCapture";
 // import GPU_SDK from './functions/gpuDetails/GPUModule.kt'
 import NetInfo from '@react-native-community/netinfo';
 class RaptorX {
@@ -193,6 +194,9 @@ class RaptorX {
       console.error("Error getting network details:", error);
       throw error;
     }
+  }
+  formCapture(e,i){
+    getElementInfo(e,i)
   }
 }
 
