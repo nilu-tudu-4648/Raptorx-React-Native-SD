@@ -61,28 +61,6 @@
 //     borderWidth: 1,
 //   },
 // });
-// export const MyTextInput = ({ onChange, ...rest }) => {
-//   const [formData, setFormData] = useState({});
-
-//   const onChangeText = (text) => {
-//     const formattedText = text.trim(); // Trim extra spaces
-//     const updatedFormData = { ...formData, [rest.fieldName]: formattedText };
-//     setFormData(updatedFormData);
-//     if (onChange) {
-//       onChange(updatedFormData);
-//     }
-//     console.log("Form Data:", updatedFormData); // Logging the formData object
-//   };
-
-//   return (
-//     <TextInput
-//       {...rest}
-//       onChangeText={onChangeText}
-//       value={formData[rest.fieldName] || ''}
-//     />
-//   );
-// };
-
 // export const ScrollEventCapture = (props) => {
 //   return <ScrollSpeedCapture {...props} />;
 // };
@@ -117,9 +95,7 @@ class RaptorX {
     this.navigation = navigation; // Set the navigation object during initialization
   }
 
-  navigationCapture() {
-    getNavigationData(this.api, this.navigation);
-  }
+
   async createSession(customerId) {
     try {
       const sessionId = await generateSessionId(this.api_key);
@@ -131,6 +107,9 @@ class RaptorX {
       console.error("Error creating session:", error);
       throw error;
     }
+  }
+  navigationCapture() {
+    getNavigationData(this.api, this.navigation);
   }
   async clearSession() {
     try {
